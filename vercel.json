@@ -13,5 +13,17 @@
                 }
             ]
         }
+    ],
+    "version": 2,
+    "buildCommand": "",
+    "outputDirectory": "dist",
+    "routes": [
+      {
+        "handle": "filesystem"
+      },
+      {
+        "src": "/.*",
+        "dest": "/dist/index.html"
+      }
     ]
 }

@@ -1,0 +1,1 @@
+This repo contains a build folder from quantum-purse webstatic repo

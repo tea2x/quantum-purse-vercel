@@ -1,7 +1,10 @@
 {
-    "headers": [
+    "version": 2,
+    "buildCommand": "",
+    "outputDirectory": "dist",
+    "routes": [
         {
-            "source": "/(.*)",
+            "src": "/(.*)",
             "headers": [
                 {
                     "key": "Cross-Origin-Embedder-Policy",
@@ -11,19 +14,15 @@
                     "key": "Cross-Origin-Opener-Policy",
                     "value": "same-origin"
                 }
-            ]
+            ],
+            "continue": true
+        },
+        {
+            "handle": "filesystem"
+        },
+        {
+            "src": "/.*",
+            "dest": "/dist/index.html"
         }
-    ],
-    "version": 2,
-    "buildCommand": "",
-    "outputDirectory": "dist",
-    "routes": [
-      {
-        "handle": "filesystem"
-      },
-      {
-        "src": "/.*",
-        "dest": "/dist/index.html"
-      }
     ]
 }

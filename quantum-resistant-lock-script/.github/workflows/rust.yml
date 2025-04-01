@@ -1,0 +1,40 @@
+name: Rust
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: "true"
+    - name: Install llvm
+      run: sudo apt update && sudo apt install -y clang llvm clang-format lld
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: Prepare, build, test, clippy, format
+      run: make prepare build test clippy fmt
+    - name: git diff
+      run: git diff --exit-code
+
+  macos-build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Install llvm 18
+      run: brew install llvm@18
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: Prepare, build, test, clippy, format
+      run: make prepare build test clippy fmt
+    - name: git diff
+      run: git diff --exit-code

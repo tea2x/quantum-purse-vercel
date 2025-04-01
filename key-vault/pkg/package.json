@@ -1,7 +1,13 @@
 {
   "name": "key-vault",
   "type": "module",
+  "description": "A key processor library for Quantum Purse",
   "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tea2x/quantum-purse-web-static"
+  },
   "files": [
     "key_vault_bg.wasm",
     "key_vault.js",

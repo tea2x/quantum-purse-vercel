@@ -46,7 +46,7 @@ export class KeyVault {
    *
    * **Note**: Only effective when the mnemonic phrase is not yet set.
    */
-  static key_init(password: Uint8Array): Promise<void>;
+  static init_seed_phrase(password: Uint8Array): Promise<void>;
   /**
    * Generates a new SPHINCS+ key pair - a SPHINCS+ child key pair derived from the mnemonic phrase,
    * encrypts the private key with the password, and stores/appends it in IndexedDB.
@@ -55,12 +55,12 @@ export class KeyVault {
    * - `password: Uint8Array` - The password used to decrypt the mnemonic phrase and encrypt the child private key.
    *
    * **Returns**:
-   * - `Result<JsValue, JsValue>` - A JavaScript Promise that resolves to the hex-encoded SPHINCS+ public key on success,
+   * - `Result<String, JsValue>` - A String Promise that resolves to the hex-encoded SPHINCS+ public key from the key pair on success,
    *   or rejects with a JavaScript error on failure.
    *
    * **Async**: Yes
    */
-  static gen_new_key_pair(password: Uint8Array): Promise<any>;
+  static gen_new_key_pair(password: Uint8Array): Promise<string>;
   /**
    * Imports a mnemonic by encrypting it with the provided password and storing it as the mnemonic phrase.
    *
@@ -90,6 +90,7 @@ export class KeyVault {
    * **Async**: Yes
    *
    * **Warning**: Exporting the mnemonic exposes it in JavaScript, which may pose a security risk.
+   * Proper zeroization of exported seed phrase is the responsibility of the caller.
    */
   static export_seed_phrase(password: Uint8Array): Promise<Uint8Array>;
   /**
@@ -119,7 +120,7 @@ export class KeyVault {
    * - `Result<Vec<String>, JsValue>` - A list of public keys as strings on success,
    *   or a JavaScript error on failure.
    */
-  static search_accounts(password: Uint8Array, start_index: number, count: number): Promise<string[]>;
+  static gen_account_batch(password: Uint8Array, start_index: number, count: number): Promise<string[]>;
   /**
    * Supporting wallet recovery - Recovers the wallet by deriving and storing private keys for the first N accounts.
    *
@@ -128,11 +129,11 @@ export class KeyVault {
    * - `count: u32` - The number of accounts to recover (from index 0 to count-1).
    *
    * **Returns**:
-   * - `Result<(), JsValue>` - Ok on success, or a JavaScript error on failure.
+   * - `Result<(), JsValue>` - A list of newly generated sphincs+ public keys on success, or a JavaScript error on failure.
    *
    * **Async**: Yes
    */
-  static recover_wallet(password: Uint8Array, count: number): Promise<void>;
+  static recover_accounts(password: Uint8Array, count: number): Promise<string[]>;
 }
 export class Util {
   private constructor();
@@ -175,13 +176,13 @@ export interface InitOutput {
   readonly keyvault_new: () => number;
   readonly keyvault_clear_database: () => any;
   readonly keyvault_get_all_sphincs_pub: () => any;
-  readonly keyvault_key_init: (a: any) => any;
+  readonly keyvault_init_seed_phrase: (a: any) => any;
   readonly keyvault_gen_new_key_pair: (a: any) => any;
   readonly keyvault_import_seed_phrase: (a: any, b: any) => any;
   readonly keyvault_export_seed_phrase: (a: any) => any;
   readonly keyvault_sign: (a: any, b: number, c: number, d: any) => any;
-  readonly keyvault_search_accounts: (a: any, b: number, c: number) => any;
-  readonly keyvault_recover_wallet: (a: any, b: number) => any;
+  readonly keyvault_gen_account_batch: (a: any, b: number, c: number) => any;
+  readonly keyvault_recover_accounts: (a: any, b: number) => any;
   readonly __wbg_util_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
@@ -190,10 +191,10 @@ export interface InitOutput {
   readonly __wbindgen_export_4: WebAssembly.Table;
   readonly __wbindgen_export_5: WebAssembly.Table;
   readonly __externref_table_dealloc: (a: number) => void;
-  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h579c9401240684ab: (a: number, b: number) => void;
-  readonly closure30_externref_shim: (a: number, b: number, c: any) => void;
-  readonly closure82_externref_shim_multivalue_shim: (a: number, b: number, c: any) => [number, number];
-  readonly closure39_externref_shim: (a: number, b: number, c: any, d: any) => void;
+  readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h6b9fc94e7dc53c60: (a: number, b: number) => void;
+  readonly closure21_externref_shim: (a: number, b: number, c: any) => void;
+  readonly closure70_externref_shim_multivalue_shim: (a: number, b: number, c: any) => [number, number];
+  readonly closure33_externref_shim: (a: number, b: number, c: any, d: any) => void;
   readonly __wbindgen_start: () => void;
 }
 

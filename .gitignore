@@ -108,7 +108,5 @@ dist
 package-lock.json
 
 # Rust key vault build output
-key-vault/target/
-key-vault/Cargo.lock
 target/
 .DS_Store

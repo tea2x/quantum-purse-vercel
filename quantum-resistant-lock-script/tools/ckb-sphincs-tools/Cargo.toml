@@ -1,0 +1,33 @@
+[package]
+edition = "2021"
+name = "ckb_sphincs_tools"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = ["sha2", "hash_128", "hash_options_f", "thashes_simple"]
+haraka = ["ckb_sphincs_utils/haraka"]
+sha2 = ["ckb_sphincs_utils/sha2"]
+shake = ["ckb_sphincs_utils/shake"]
+
+hash_128 = ["ckb_sphincs_utils/hash_128"]
+hash_192 = ["ckb_sphincs_utils/hash_192"]
+hash_256 = ["ckb_sphincs_utils/hash_256"]
+
+hash_options_f = ["ckb_sphincs_utils/hash_options_f"]
+hash_options_s = ["ckb_sphincs_utils/hash_options_s"]
+
+thashes_robust = ["ckb_sphincs_utils/thashes_robust"]
+thashes_simple = ["ckb_sphincs_utils/thashes_simple"]
+
+[dependencies]
+ckb-crypto = "0.106.0"
+ckb-hash = "0.106.0"
+ckb-jsonrpc-types = "0.106.0"
+ckb-sdk = "2.4.0"
+ckb-types = "0.106.0"
+clap = {version = "4.1.7", features = ["derive"]}
+lazy_static = "1.4.0"
+serde_json = "1.0.93"
+ckb_sphincs_utils = {path = "../ckb-sphincs-utils", default-features = false}

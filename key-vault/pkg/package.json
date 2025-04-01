@@ -1,0 +1,15 @@
+{
+  "name": "key-vault",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "key_vault_bg.wasm",
+    "key_vault.js",
+    "key_vault.d.ts"
+  ],
+  "main": "key_vault.js",
+  "types": "key_vault.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

@@ -11,7 +11,7 @@
     "test:rust": "cargo test",
     "test:js": "npx karma start",
     "test": "npm run test:rust && npm run test:js",
-    "deploy": "npx gh-pages-clean && node ./src/deploy.js",
+    "deploy": "npx gh-pages-clean && node ./deploy.js",
     "predeploy": "DEPLOY_TARGET=gh-pages npm run build"
   },
   "author": "tea2x",

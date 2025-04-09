@@ -208,24 +208,42 @@ function takeFromExternrefTable0(idx) {
     wasm.__externref_table_dealloc(idx);
     return value;
 }
-function __wbg_adapter_48(arg0, arg1) {
-    wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h2b93dcc0cdfb007d(arg0, arg1);
-}
-
-function __wbg_adapter_51(arg0, arg1, arg2) {
-    wasm.closure23_externref_shim(arg0, arg1, arg2);
-}
-
-function __wbg_adapter_54(arg0, arg1, arg2) {
-    const ret = wasm.closure80_externref_shim_multivalue_shim(arg0, arg1, arg2);
+function __wbg_adapter_48(arg0, arg1, arg2) {
+    const ret = wasm.closure72_externref_shim_multivalue_shim(arg0, arg1, arg2);
     if (ret[1]) {
         throw takeFromExternrefTable0(ret[0]);
     }
 }
 
-function __wbg_adapter_111(arg0, arg1, arg2, arg3) {
-    wasm.closure35_externref_shim(arg0, arg1, arg2, arg3);
+function __wbg_adapter_51(arg0, arg1) {
+    wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h2b93dcc0cdfb007d(arg0, arg1);
 }
+
+function __wbg_adapter_54(arg0, arg1, arg2) {
+    wasm.closure40_externref_shim(arg0, arg1, arg2);
+}
+
+function __wbg_adapter_111(arg0, arg1, arg2, arg3) {
+    wasm.closure48_externref_shim(arg0, arg1, arg2, arg3);
+}
+
+/**
+ * @enum {48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59}
+ */
+export const SphincsVariant = Object.freeze({
+    Sha2128F: 48, "48": "Sha2128F",
+    Sha2128S: 49, "49": "Sha2128S",
+    Sha2192F: 50, "50": "Sha2192F",
+    Sha2192S: 51, "51": "Sha2192S",
+    Sha2256F: 52, "52": "Sha2256F",
+    Sha2256S: 53, "53": "Sha2256S",
+    Shake128F: 54, "54": "Shake128F",
+    Shake128S: 55, "55": "Shake128S",
+    Shake192F: 56, "56": "Shake192F",
+    Shake192S: 57, "57": "Shake192S",
+    Shake256F: 58, "58": "Shake256F",
+    Shake256S: 59, "59": "Shake256S",
+});
 
 const __wbindgen_enum_IdbRequestReadyState = ["pending", "done"];
 
@@ -234,9 +252,7 @@ const __wbindgen_enum_IdbTransactionMode = ["readonly", "readwrite", "versioncha
 const KeyVaultFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_keyvault_free(ptr >>> 0, 1));
-/**
- * Creating namespaces for the generated js interface.
- */
+
 export class KeyVault {
 
     __destroy_into_raw() {
@@ -251,13 +267,27 @@ export class KeyVault {
         wasm.__wbg_keyvault_free(ptr, 0);
     }
     /**
-     * Constructs a new `KeyVault`. Stateless and serves as a namespace only.
+     * @returns {SphincsVariant}
+     */
+    get sphincs_plus_variant() {
+        const ret = wasm.__wbg_get_keyvault_sphincs_plus_variant(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {SphincsVariant} arg0
+     */
+    set sphincs_plus_variant(arg0) {
+        wasm.__wbg_set_keyvault_sphincs_plus_variant(this.__wbg_ptr, arg0);
+    }
+    /**
+     * Constructs a new `KeyVault` to serve as a namespace in the output js interface.
      *
      * **Returns**:
      * - `KeyVault` - A new instance of the struct.
+     * @param {SphincsVariant} variant
      */
-    constructor() {
-        const ret = wasm.keyvault_new();
+    constructor(variant) {
+        const ret = wasm.keyvault_new(variant);
         this.__wbg_ptr = ret >>> 0;
         KeyVaultFinalization.register(this, this.__wbg_ptr, this);
         return this;
@@ -325,8 +355,8 @@ export class KeyVault {
      * @param {Uint8Array} password
      * @returns {Promise<string>}
      */
-    static gen_new_key_pair(password) {
-        const ret = wasm.keyvault_gen_new_key_pair(password);
+    gen_new_key_pair(password) {
+        const ret = wasm.keyvault_gen_new_key_pair(this.__wbg_ptr, password);
         return ret;
     }
     /**
@@ -390,10 +420,10 @@ export class KeyVault {
      * @param {Uint8Array} message
      * @returns {Promise<Uint8Array>}
      */
-    static sign(password, sphincs_plus_pub, message) {
+    sign(password, sphincs_plus_pub, message) {
         const ptr0 = passStringToWasm0(sphincs_plus_pub, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        const ret = wasm.keyvault_sign(password, ptr0, len0, message);
+        const ret = wasm.keyvault_sign(this.__wbg_ptr, password, ptr0, len0, message);
         return ret;
     }
     /**
@@ -412,8 +442,8 @@ export class KeyVault {
      * @param {number} count
      * @returns {Promise<string[]>}
      */
-    static gen_account_batch(password, start_index, count) {
-        const ret = wasm.keyvault_gen_account_batch(password, start_index, count);
+    gen_account_batch(password, start_index, count) {
+        const ret = wasm.keyvault_gen_account_batch(this.__wbg_ptr, password, start_index, count);
         return ret;
     }
     /**
@@ -431,8 +461,8 @@ export class KeyVault {
      * @param {number} count
      * @returns {Promise<string[]>}
      */
-    static recover_accounts(password, count) {
-        const ret = wasm.keyvault_recover_accounts(password, count);
+    recover_accounts(password, count) {
+        const ret = wasm.keyvault_recover_accounts(this.__wbg_ptr, password, count);
         return ret;
     }
 }
@@ -935,20 +965,20 @@ function __wbg_get_imports() {
         const ret = false;
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper1290 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 20, __wbg_adapter_51);
+    imports.wbg.__wbindgen_closure_wrapper1432 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 37, __wbg_adapter_54);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper349 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 20, __wbg_adapter_48);
+    imports.wbg.__wbindgen_closure_wrapper274 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 37, __wbg_adapter_48);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper354 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 20, __wbg_adapter_51);
+    imports.wbg.__wbindgen_closure_wrapper531 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 37, __wbg_adapter_51);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper969 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 20, __wbg_adapter_54);
+    imports.wbg.__wbindgen_closure_wrapper536 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 37, __wbg_adapter_54);
         return ret;
     };
     imports.wbg.__wbindgen_debug_string = function(arg0, arg1) {

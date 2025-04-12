@@ -1,5 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
+/**
+ * ID of all 12 SPHINCS+ variants.
+ */
 export enum SphincsVariant {
   Sha2128F = 48,
   Sha2128S = 49,
@@ -14,6 +17,9 @@ export enum SphincsVariant {
   Shake256F = 58,
   Shake256S = 59,
 }
+/**
+ *  Key-vault functions
+ */
 export class KeyVault {
   free(): void;
   /**
@@ -147,6 +153,9 @@ export class KeyVault {
   recover_accounts(password: Uint8Array, count: number): Promise<string[]>;
   sphincs_plus_variant: SphincsVariant;
 }
+/**
+ *  Key-vault utility functions
+ */
 export class Util {
   private constructor();
   free(): void;
@@ -185,9 +194,6 @@ export interface InitOutput {
   readonly __wbg_keyvault_free: (a: number, b: number) => void;
   readonly __wbg_get_keyvault_sphincs_plus_variant: (a: number) => number;
   readonly __wbg_set_keyvault_sphincs_plus_variant: (a: number, b: number) => void;
-  readonly __wbg_util_free: (a: number, b: number) => void;
-  readonly util_get_ckb_tx_message_all: (a: any) => [number, number, number];
-  readonly util_password_checker: (a: any) => [number, number, number];
   readonly keyvault_new: (a: number) => number;
   readonly keyvault_clear_database: () => any;
   readonly keyvault_get_all_sphincs_pub: () => any;
@@ -198,6 +204,9 @@ export interface InitOutput {
   readonly keyvault_sign: (a: number, b: any, c: number, d: number, e: any) => any;
   readonly keyvault_gen_account_batch: (a: number, b: any, c: number, d: number) => any;
   readonly keyvault_recover_accounts: (a: number, b: any, c: number) => any;
+  readonly __wbg_util_free: (a: number, b: number) => void;
+  readonly util_get_ckb_tx_message_all: (a: any) => [number, number, number];
+  readonly util_password_checker: (a: any) => [number, number, number];
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;
@@ -205,7 +214,7 @@ export interface InitOutput {
   readonly __wbindgen_export_4: WebAssembly.Table;
   readonly __wbindgen_export_5: WebAssembly.Table;
   readonly __externref_table_dealloc: (a: number) => void;
-  readonly closure72_externref_shim_multivalue_shim: (a: number, b: number, c: any) => [number, number];
+  readonly closure80_externref_shim_multivalue_shim: (a: number, b: number, c: any) => [number, number];
   readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h2b93dcc0cdfb007d: (a: number, b: number) => void;
   readonly closure40_externref_shim: (a: number, b: number, c: any) => void;
   readonly closure48_externref_shim: (a: number, b: number, c: any, d: any) => void;

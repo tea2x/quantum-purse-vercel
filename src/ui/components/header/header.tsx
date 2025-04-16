@@ -36,7 +36,8 @@ const Header: React.FC<HeaderProps> = ({ className, ...rest }) => {
     <header className={cx(styles.header, className)} {...rest}>
       <div className="header-left">
         <Icon.Chip
-          color="var(--black)"
+          className={styles.zoomInOut}
+          color="var(--white)"
           onClick={() => {
             const step = localStorage.getItem(STORAGE_KEYS.WALLET_STEP);
             if (!step) {
@@ -44,7 +45,9 @@ const Header: React.FC<HeaderProps> = ({ className, ...rest }) => {
             }
           }}
         />
-        <p className={styles.text}>Quantum Purse</p>
+        {screens.md && (
+          <p className={styles.text}>Quantum Purse</p>
+        )}
       </div>
 
       <div className="header-right">

@@ -209,7 +209,7 @@ function takeFromExternrefTable0(idx) {
     return value;
 }
 function __wbg_adapter_48(arg0, arg1, arg2) {
-    const ret = wasm.closure80_externref_shim_multivalue_shim(arg0, arg1, arg2);
+    const ret = wasm.closure81_externref_shim_multivalue_shim(arg0, arg1, arg2);
     if (ret[1]) {
         throw takeFromExternrefTable0(ret[0]);
     }
@@ -220,11 +220,11 @@ function __wbg_adapter_51(arg0, arg1) {
 }
 
 function __wbg_adapter_54(arg0, arg1, arg2) {
-    wasm.closure40_externref_shim(arg0, arg1, arg2);
+    wasm.closure45_externref_shim(arg0, arg1, arg2);
 }
 
 function __wbg_adapter_111(arg0, arg1, arg2, arg3) {
-    wasm.closure48_externref_shim(arg0, arg1, arg2, arg3);
+    wasm.closure53_externref_shim(arg0, arg1, arg2, arg3);
 }
 
 /**
@@ -270,17 +270,19 @@ export class KeyVault {
         wasm.__wbg_keyvault_free(ptr, 0);
     }
     /**
+     * The one parameter set chosen for QuantumPurse KeyVault setup in all 12 NIST-approved SPHINCS+ FIPS205 variants
      * @returns {SphincsVariant}
      */
-    get sphincs_plus_variant() {
-        const ret = wasm.__wbg_get_keyvault_sphincs_plus_variant(this.__wbg_ptr);
+    get variant() {
+        const ret = wasm.__wbg_get_keyvault_variant(this.__wbg_ptr);
         return ret;
     }
     /**
+     * The one parameter set chosen for QuantumPurse KeyVault setup in all 12 NIST-approved SPHINCS+ FIPS205 variants
      * @param {SphincsVariant} arg0
      */
-    set sphincs_plus_variant(arg0) {
-        wasm.__wbg_set_keyvault_sphincs_plus_variant(this.__wbg_ptr, arg0);
+    set variant(arg0) {
+        wasm.__wbg_set_keyvault_variant(this.__wbg_ptr, arg0);
     }
     /**
      * Constructs a new `KeyVault` to serve as a namespace in the output js interface.
@@ -339,8 +341,8 @@ export class KeyVault {
      * @param {Uint8Array} password
      * @returns {Promise<void>}
      */
-    static init_seed_phrase(password) {
-        const ret = wasm.keyvault_init_seed_phrase(password);
+    init_seed_phrase(password) {
+        const ret = wasm.keyvault_init_seed_phrase(this.__wbg_ptr, password);
         return ret;
     }
     /**
@@ -375,13 +377,13 @@ export class KeyVault {
      *
      * **Async**: Yes
      *
-     * **Warning**: This method is not recommended as it may expose the mnemonic in JavaScript.
+     * **Warning**: Handle the mnemonic in JavaScript side carefully.
      * @param {Uint8Array} seed_phrase
      * @param {Uint8Array} password
      * @returns {Promise<void>}
      */
-    static import_seed_phrase(seed_phrase, password) {
-        const ret = wasm.keyvault_import_seed_phrase(seed_phrase, password);
+    import_seed_phrase(seed_phrase, password) {
+        const ret = wasm.keyvault_import_seed_phrase(this.__wbg_ptr, seed_phrase, password);
         return ret;
     }
     /**
@@ -970,20 +972,20 @@ function __wbg_get_imports() {
         const ret = false;
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper1433 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 37, __wbg_adapter_54);
+    imports.wbg.__wbindgen_closure_wrapper1481 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 42, __wbg_adapter_54);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper273 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 37, __wbg_adapter_48);
+    imports.wbg.__wbindgen_closure_wrapper285 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 42, __wbg_adapter_48);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper530 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 37, __wbg_adapter_51);
+    imports.wbg.__wbindgen_closure_wrapper557 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 42, __wbg_adapter_51);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper535 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 37, __wbg_adapter_54);
+    imports.wbg.__wbindgen_closure_wrapper562 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 42, __wbg_adapter_54);
         return ret;
     };
     imports.wbg.__wbindgen_debug_string = function(arg0, arg1) {

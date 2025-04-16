@@ -63,7 +63,7 @@ export class KeyVault {
    *
    * **Note**: Only effective when the mnemonic phrase is not yet set.
    */
-  static init_seed_phrase(password: Uint8Array): Promise<void>;
+  init_seed_phrase(password: Uint8Array): Promise<void>;
   /**
    * Generates a new SPHINCS+ key pair - a SPHINCS+ child key pair derived from the mnemonic phrase,
    * encrypts the private key with the password, and stores/appends it in IndexedDB.
@@ -91,9 +91,9 @@ export class KeyVault {
    *
    * **Async**: Yes
    *
-   * **Warning**: This method is not recommended as it may expose the mnemonic in JavaScript.
+   * **Warning**: Handle the mnemonic in JavaScript side carefully.
    */
-  static import_seed_phrase(seed_phrase: Uint8Array, password: Uint8Array): Promise<void>;
+  import_seed_phrase(seed_phrase: Uint8Array, password: Uint8Array): Promise<void>;
   /**
    * Exports the mnemonic phrase by decrypting it with the provided password.
    *
@@ -151,7 +151,10 @@ export class KeyVault {
    * **Async**: Yes
    */
   recover_accounts(password: Uint8Array, count: number): Promise<string[]>;
-  sphincs_plus_variant: SphincsVariant;
+  /**
+   * The one parameter set chosen for QuantumPurse KeyVault setup in all 12 NIST-approved SPHINCS+ FIPS205 variants
+   */
+  variant: SphincsVariant;
 }
 /**
  *  Key-vault utility functions
@@ -192,14 +195,14 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_keyvault_free: (a: number, b: number) => void;
-  readonly __wbg_get_keyvault_sphincs_plus_variant: (a: number) => number;
-  readonly __wbg_set_keyvault_sphincs_plus_variant: (a: number, b: number) => void;
+  readonly __wbg_get_keyvault_variant: (a: number) => number;
+  readonly __wbg_set_keyvault_variant: (a: number, b: number) => void;
   readonly keyvault_new: (a: number) => number;
   readonly keyvault_clear_database: () => any;
   readonly keyvault_get_all_sphincs_pub: () => any;
-  readonly keyvault_init_seed_phrase: (a: any) => any;
+  readonly keyvault_init_seed_phrase: (a: number, b: any) => any;
   readonly keyvault_gen_new_key_pair: (a: number, b: any) => any;
-  readonly keyvault_import_seed_phrase: (a: any, b: any) => any;
+  readonly keyvault_import_seed_phrase: (a: number, b: any, c: any) => any;
   readonly keyvault_export_seed_phrase: (a: any) => any;
   readonly keyvault_sign: (a: number, b: any, c: number, d: number, e: any) => any;
   readonly keyvault_gen_account_batch: (a: number, b: any, c: number, d: number) => any;
@@ -214,10 +217,10 @@ export interface InitOutput {
   readonly __wbindgen_export_4: WebAssembly.Table;
   readonly __wbindgen_export_5: WebAssembly.Table;
   readonly __externref_table_dealloc: (a: number) => void;
-  readonly closure80_externref_shim_multivalue_shim: (a: number, b: number, c: any) => [number, number];
+  readonly closure81_externref_shim_multivalue_shim: (a: number, b: number, c: any) => [number, number];
   readonly _dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h2b93dcc0cdfb007d: (a: number, b: number) => void;
-  readonly closure40_externref_shim: (a: number, b: number, c: any) => void;
-  readonly closure48_externref_shim: (a: number, b: number, c: any, d: any) => void;
+  readonly closure45_externref_shim: (a: number, b: number, c: any) => void;
+  readonly closure53_externref_shim: (a: number, b: number, c: any, d: any) => void;
   readonly __wbindgen_start: () => void;
 }
 

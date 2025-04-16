@@ -22,11 +22,14 @@ export { SphincsVariant } from "../../key-vault/pkg/key_vault";
  * managing seed phrases, and interacting with the blockchain.
  */
 export default class QuantumPurse {
+  //**************************************************************************************//
+  //*********************************** ATRIBUTES ****************************************//
+  //**************************************************************************************//
   /* All in one lock script configuration */
-  private static readonly MULTISIG_ID = "80";
+  private static readonly MULTISIG_ID     = "80";
   private static readonly REQUIRE_FISRT_N = "00";
-  private static readonly THRESHOLD = "01";
-  private static readonly PUBKEY_NUM = "01";
+  private static readonly THRESHOLD       = "01";
+  private static readonly PUBKEY_NUM      = "01";
   private static instance?: QuantumPurse;
   /* CKB light client status worker */
   private worker: Worker | undefined;
@@ -39,49 +42,31 @@ export default class QuantumPurse {
   > = new Map();
   private client?: LightClient;
   private syncStatusListeners: Set<(status: any) => void> = new Set();
-
   private static readonly CLIENT_SECRET = "ckb-light-client-wasm-secret-key";
-  private static readonly START_BLOCK = "ckb-light-client-wasm-start-block";
+  private static readonly START_BLOCK   = "ckb-light-client-wasm-start-block";
   /* Account management */
   private keyVault?: KeyVault;
-  public accountPointer?: string; // Is a sphincs+ public key
   private sphincsLock: { codeHash: string; hashType: HashType };
+  public accountPointer?: string; // Is a sphincs+ public key
 
+  //**************************************************************************************//
+  //*************************************** METHODS **************************************//
+  //**************************************************************************************//
   /** Constructor that takes sphincs+ on-chain binary deployment info */
   private constructor(sphincsCodeHash: string, sphincsHashType: HashType) {
     this.sphincsLock = { codeHash: sphincsCodeHash, hashType: sphincsHashType };
   }
 
   /* init code for wasm-bindgen module */
-  public async initWasmBindgen(): Promise<void> {
+  private async initWasmBindgen(): Promise<void> {
     await __wbg_init();
   }
 
-  /* init keyVault module with the input sphincs+ variant */
-  public initKeyVault(variant: SphincsVariant) {
-    this.keyVault = new KeyVault(variant);
-  }
-
-  /* get the name of sphincs+ paramset of choice*/
-  public getSphincsPlusParamSet(): string {
-    if (!this.keyVault) throw new Error("KeyVault not initialized!");
-    return SphincsVariant[this.keyVault.sphincs_plus_variant];
-  }
-
-  /**
-   * Gets the singleton instance of QuantumPurse.
-   * It seems key-vault initialization should be placed in a different init function.
-   * But Keyvault is too fused to QuantumPurse so for convenience, it is placed here.
-   * @returns The singleton instance of QuantumPurse.
-   */
-  public static getInstance() {
-    if (!QuantumPurse.instance) {
-      QuantumPurse.instance = new QuantumPurse(
-        SPHINCSPLUS_LOCK.codeHash,
-        SPHINCSPLUS_LOCK.hashType as HashType
-      );
-    }
-    return QuantumPurse.instance;
+  /* init light client and status worker */
+  private async initLightClient(): Promise<void> {
+    await this.startLightClient();
+    await this.fetchSphincsPlusCellDeps();
+    this.startClientSyncStatusWorker();
   }
 
   /** Conjugate the first 4 bytes of the witness.lock for the hasher */
@@ -92,16 +77,6 @@ export default class QuantumPurse {
       QuantumPurse.THRESHOLD +
       QuantumPurse.PUBKEY_NUM
     );
-  }
-
-  /* Method to add a listener */
-  public addSyncStatusListener(listener: (status: any) => void): void {
-    this.syncStatusListeners.add(listener);
-  }
-  
-  /* Method to remove a listener */
-  public removeSyncStatusListener(listener: (status: any) => void): void {
-    this.syncStatusListeners.delete(listener);
   }
 
   /** Initialize web worker to poll the sync status from the ckb light client */
@@ -141,18 +116,6 @@ export default class QuantumPurse {
     });
   }
 
-  /**
-   * Send the signed transaction via the light client.
-   * @param signedTx The signed CKB transaction
-   * @returns The transaction hash(id).
-   * @throws Error light client is not initialized.
-   */
-  public async sendTransaction(signedTx: Transaction): Promise<string> {
-    if (!this.client) throw new Error("Light client not initialized");
-    const txid = this.client.sendTransaction(signedTx);
-    return txid;
-  }
-
   /* Helper to infer start block set in the light client
   When querying status, if no data in DB is detected, start is inferred as 0 to not mis relevant data */
   private inferStartBlock(storeKey: string): bigint {
@@ -184,34 +147,6 @@ export default class QuantumPurse {
       [{ blockNumber: startingBlock, script: lock, scriptType: "lock" }],
       firstAccount ? LightClientSetScriptsCommand.All : LightClientSetScriptsCommand.Partial
     );
-  }
-
-  /**
-   * Helper function tells the light client which account and from what block they start making transactions.
-   * @param spxPubKeys The sphincs+ publickey array representing sphincs+ accounts in your DB.
-   * @param startingBlocks The starting block array corresponding to the spxPubKeys to be set.
-   * @param setMode The mode to set the scripts (All, Partial, Delete).
-   * @throws Error light client is not initialized.
-   */
-  public async setSellectiveSyncFilter(spxPubKeys: string[], startingBlocks: bigint[], setMode: LightClientSetScriptsCommand) {
-    if (!this.client) throw new Error("Light client not initialized");
-
-    if (spxPubKeys.length !== startingBlocks.length) {
-      throw new Error("Length of spxPubKeys and startingBlocks must be the same");
-    }
-
-    for (let i = 0; i < spxPubKeys.length; i++) {
-      const storageKey = QuantumPurse.START_BLOCK + "-" + spxPubKeys[i];
-      localStorage.setItem(storageKey, startingBlocks[i].toString());
-    }
-
-    const filters: ScriptStatus[] = spxPubKeys.map((spxPubKey, index) => ({
-      blockNumber: startingBlocks[index],
-      script: this.getLock(spxPubKey),
-      scriptType: "lock"
-    }));
-
-    await this.client.setScripts(filters, setMode);
   }
 
   /* Calculate sync status */
@@ -285,6 +220,96 @@ export default class QuantumPurse {
   }
 
   /**
+   * Gets the singleton instance of QuantumPurse.
+   * It seems key-vault initialization should be placed in a different init function.
+   * But Keyvault is too fused to QuantumPurse so for convenience, it is placed here.
+   * @returns The singleton instance of QuantumPurse.
+   */
+  public static getInstance() {
+    if (!QuantumPurse.instance) {
+      QuantumPurse.instance = new QuantumPurse(
+        SPHINCSPLUS_LOCK.codeHash,
+        SPHINCSPLUS_LOCK.hashType as HashType
+      );
+    }
+    return QuantumPurse.instance;
+  }
+
+  /* init background service as wasm code and light client*/
+  public async initBackgroundServices(): Promise<void> {
+    await this.initWasmBindgen();
+    await this.initLightClient();
+  }
+
+  /**
+   * Fresh start a key-vault instance with a pre-determined SPHINCS variant.
+   * @param variant The SPHINCS+ parameter set to start with
+   * @returns void.
+   */
+  public initKeyVault(variant: SphincsVariant) {
+    if (this.keyVault) {
+      this.keyVault.free();
+    }
+    this.keyVault = new KeyVault(variant);
+  }
+
+  /* get the name of sphincs+ paramset of choice*/
+  public getSphincsPlusParamSet(): string {
+    if (!this.keyVault) throw new Error("KeyVault not initialized!");
+    return SphincsVariant[this.keyVault.variant];
+  }
+
+  /* Method to add a listener */
+  public addSyncStatusListener(listener: (status: any) => void): void {
+    this.syncStatusListeners.add(listener);
+  }
+  
+  /* Method to remove a listener */
+  public removeSyncStatusListener(listener: (status: any) => void): void {
+    this.syncStatusListeners.delete(listener);
+  }
+
+  /**
+   * Send the signed transaction via the light client.
+   * @param signedTx The signed CKB transaction
+   * @returns The transaction hash(id).
+   * @throws Error light client is not initialized.
+   */
+  public async sendTransaction(signedTx: Transaction): Promise<string> {
+    if (!this.client) throw new Error("Light client not initialized");
+    const txid = this.client.sendTransaction(signedTx);
+    return txid;
+  }
+
+  /**
+   * Helper function tells the light client which account and from what block they start making transactions.
+   * @param spxPubKeys The sphincs+ publickey array representing sphincs+ accounts in your DB.
+   * @param startingBlocks The starting block array corresponding to the spxPubKeys to be set.
+   * @param setMode The mode to set the scripts (All, Partial, Delete).
+   * @throws Error light client is not initialized.
+   */
+  public async setSellectiveSyncFilter(spxPubKeys: string[], startingBlocks: bigint[], setMode: LightClientSetScriptsCommand) {
+    if (!this.client) throw new Error("Light client not initialized");
+
+    if (spxPubKeys.length !== startingBlocks.length) {
+      throw new Error("Length of spxPubKeys and startingBlocks must be the same");
+    }
+
+    for (let i = 0; i < spxPubKeys.length; i++) {
+      const storageKey = QuantumPurse.START_BLOCK + "-" + spxPubKeys[i];
+      localStorage.setItem(storageKey, startingBlocks[i].toString());
+    }
+
+    const filters: ScriptStatus[] = spxPubKeys.map((spxPubKey, index) => ({
+      blockNumber: startingBlocks[index],
+      script: this.getLock(spxPubKey),
+      scriptType: "lock"
+    }));
+
+    await this.client.setScripts(filters, setMode);
+  }
+
+  /**
    * Gets the CKB lock script.
    * @param spxPubKey - The sphincs+ public key to get a lock script from.
    * @returns The CKB lock script (an asset lock in CKB blockchain).
@@ -302,7 +327,7 @@ export default class QuantumPurse {
     // recreating on-chain lock script procedure
     const hasher = new CKBSphincsPlusHasher();
     hasher.update("0x" + this.spxAllInOneSetupHashInput());
-    hasher.update("0x" + (this.keyVault.sphincs_plus_variant << 1).toString(16));
+    hasher.update("0x" + (this.keyVault.variant << 1).toString(16));
     hasher.update("0x" + accPointer);
 
     return {
@@ -371,7 +396,7 @@ export default class QuantumPurse {
       const spxSigHex = new Reader(spxSig.buffer as ArrayBuffer).serializeJson();
       const fullCkbQrSig =
         this.spxAllInOneSetupHashInput() +
-        ((this.keyVault.sphincs_plus_variant << 1) | 1).toString(16) +
+        ((this.keyVault.variant << 1) | 1).toString(16) +
         accPointer +
         spxSigHex.replace(/^0x/, "");
 
@@ -453,7 +478,8 @@ export default class QuantumPurse {
     password: Uint8Array
   ): Promise<void> {
     try {
-      await KeyVault.import_seed_phrase(seedPhrase, password);
+      if (!this.keyVault) throw new Error("KeyVault not initialized!");
+      await this.keyVault.import_seed_phrase(seedPhrase, password);
     } finally {
       password.fill(0);
       seedPhrase.fill(0);
@@ -476,13 +502,6 @@ export default class QuantumPurse {
     }
   }
 
-  /* init light client and status worker */
-  public async initLightClient(): Promise<void> {
-    await this.startLightClient();
-    await this.fetchSphincsPlusCellDeps();
-    this.startClientSyncStatusWorker();
-  }
-
   /**
    * initialize a master seedphrase in DB.
    * @param password - The password to encrypt the master seed phrase.
@@ -490,7 +509,8 @@ export default class QuantumPurse {
    */
   public async initSeedPhrase(password: Uint8Array): Promise<void> {
     try {
-      await KeyVault.init_seed_phrase(password);
+      if (!this.keyVault) throw new Error("KeyVault not initialized!");
+      await this.keyVault.init_seed_phrase(password);
     } finally {
       password.fill(0);
     }

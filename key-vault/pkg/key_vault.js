@@ -209,7 +209,7 @@ function takeFromExternrefTable0(idx) {
     return value;
 }
 function __wbg_adapter_48(arg0, arg1, arg2) {
-    const ret = wasm.closure81_externref_shim_multivalue_shim(arg0, arg1, arg2);
+    const ret = wasm.closure72_externref_shim_multivalue_shim(arg0, arg1, arg2);
     if (ret[1]) {
         throw takeFromExternrefTable0(ret[0]);
     }
@@ -312,17 +312,17 @@ export class KeyVault {
         return ret;
     }
     /**
-     * Retrieves all SPHINCS+ public keys from the database in the order they get inserted.
+     * Retrieves all SPHINCS+ lock script arguments (processed public keys) from the database in the order they get inserted.
      *
      * **Returns**:
-     * - `Result<Vec<String>, JsValue>` - A JavaScript Promise that resolves to an array of hex-encoded SPHINCS+ public keys on success,
+     * - `Result<Vec<String>, JsValue>` - A JavaScript Promise that resolves to an array of hex-encoded SPHINCS+ lock script arguments on success,
      *   or rejects with a JavaScript error on failure.
      *
      * **Async**: Yes
      * @returns {Promise<string[]>}
      */
-    static get_all_sphincs_pub() {
-        const ret = wasm.keyvault_get_all_sphincs_pub();
+    static get_all_sphincs_lock_args() {
+        const ret = wasm.keyvault_get_all_sphincs_lock_args();
         return ret;
     }
     /**
@@ -346,22 +346,22 @@ export class KeyVault {
         return ret;
     }
     /**
-     * Generates a new SPHINCS+ key pair - a SPHINCS+ child key pair derived from the mnemonic phrase,
+     * Generates a new SPHINCS+ account - a SPHINCS+ child account derived from the mnemonic phrase,
      * encrypts the private key with the password, and stores/appends it in IndexedDB.
      *
      * **Parameters**:
      * - `password: Uint8Array` - The password used to decrypt the mnemonic phrase and encrypt the child private key.
      *
      * **Returns**:
-     * - `Result<String, JsValue>` - A String Promise that resolves to the hex-encoded SPHINCS+ public key from the key pair on success,
+     * - `Result<String, JsValue>` - A String Promise that resolves to the hex-encoded SPHINCS+ lock argument (processed SPHINCS+ public key) of the account on success,
      *   or rejects with a JavaScript error on failure.
      *
      * **Async**: Yes
      * @param {Uint8Array} password
      * @returns {Promise<string>}
      */
-    gen_new_key_pair(password) {
-        const ret = wasm.keyvault_gen_new_key_pair(this.__wbg_ptr, password);
+    gen_new_account(password) {
+        const ret = wasm.keyvault_gen_new_account(this.__wbg_ptr, password);
         return ret;
     }
     /**
@@ -412,7 +412,7 @@ export class KeyVault {
      *
      * **Parameters**:
      * - `password: Uint8Array` - The password used to decrypt the private key.
-     * - `sphincs_plus_pub: String` - The SPHINCS+ public key identifying the private key to use for signing.
+     * - `lock_args: String` - The hex-encoded lock script's arguments corresponding to the SPHINCS+ public key of the account that signs.
      * - `message: Uint8Array` - The message to be signed.
      *
      * **Returns**:
@@ -421,34 +421,34 @@ export class KeyVault {
      *
      * **Async**: Yes
      * @param {Uint8Array} password
-     * @param {string} sphincs_plus_pub
+     * @param {string} lock_args
      * @param {Uint8Array} message
      * @returns {Promise<Uint8Array>}
      */
-    sign(password, sphincs_plus_pub, message) {
-        const ptr0 = passStringToWasm0(sphincs_plus_pub, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    sign(password, lock_args, message) {
+        const ptr0 = passStringToWasm0(lock_args, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.keyvault_sign(this.__wbg_ptr, password, ptr0, len0, message);
         return ret;
     }
     /**
-     * Supporting wallet recovery - derives a list of public keys from the seed phrase starting from a given index.
+     * Supporting wallet recovery - derives a list of lock script arguments (processed public keys) from the seed phrase starting from a given index.
      *
      * **Parameters**:
      * - `password: Uint8Array` - The password used to decrypt the mnemonic.
      * - `start_index: u32` - The starting index for derivation.
-     * - `count: u32` - The number of public keys to derive.
+     * - `count: u32` - The number of sequential lock scripts arguments to derive.
      *
      * **Returns**:
-     * - `Result<Vec<String>, JsValue>` - A list of public keys as strings on success,
+     * - `Result<Vec<String>, JsValue>` - A list of lock script arguments on success,
      *   or a JavaScript error on failure.
      * @param {Uint8Array} password
      * @param {number} start_index
      * @param {number} count
      * @returns {Promise<string[]>}
      */
-    gen_account_batch(password, start_index, count) {
-        const ret = wasm.keyvault_gen_account_batch(this.__wbg_ptr, password, start_index, count);
+    try_gen_account_batch(password, start_index, count) {
+        const ret = wasm.keyvault_try_gen_account_batch(this.__wbg_ptr, password, start_index, count);
         return ret;
     }
     /**
@@ -459,7 +459,7 @@ export class KeyVault {
      * - `count: u32` - The number of accounts to recover (from index 0 to count-1).
      *
      * **Returns**:
-     * - `Result<(), JsValue>` - A list of newly generated sphincs+ public keys on success, or a JavaScript error on failure.
+     * - `Result<(), JsValue>` - A list of newly generated sphincs+ lock script arguments (processed public keys) on success, or a JavaScript error on failure.
      *
      * **Async**: Yes
      * @param {Uint8Array} password
@@ -972,19 +972,19 @@ function __wbg_get_imports() {
         const ret = false;
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper1481 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper1483 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 42, __wbg_adapter_54);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper285 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper287 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 42, __wbg_adapter_48);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper557 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper559 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 42, __wbg_adapter_51);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper562 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper564 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 42, __wbg_adapter_54);
         return ret;
     };
